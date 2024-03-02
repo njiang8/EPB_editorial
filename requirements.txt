@@ -1,0 +1,20 @@
+# local package
+-e .
+
+# external requirements
+geopandas
+numpy
+pandas
+matplotlib
+seaborn
+scikit-learn
+jupyter
+notebook
+jupyter_contrib_nbextensions
+jupyter_nbextensions_configurator
+autopep8
+tqdm
+momepy
+black[jupyter]
+bertopic
+nltk
