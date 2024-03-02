@@ -1,6 +1,18 @@
-# Byte-compiled / optimized / DLL files
-__pycache__/
-*.py[cod]
+/data_papers/1970s.csv
+/data_papers/1980s.csv
+/data_papers/1990s.csv
+/data_papers/2000s.csv
+/data_papers/2010s.csv
+/data_papers/2020s.csv
+/cleaned_all.csv
+/data_papers/EPB_Data.csv
+/data_papers/EPB_FG.csv
+/data_papers/inpress.csv
+/results/model_tfidf_model
+/results/topics_from_tfidf_model.csv
+/results/topics_over_time_tfidf_model.csv
+/results/topics_tfidf_model.csv
+/results/topics_full_words_tfidf_model.csv
 
 # C extensions
 *.so
@@ -90,3 +102,4 @@ target/
 .mypy_cache/
 
 **/*.pkl
+
