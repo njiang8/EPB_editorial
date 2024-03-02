@@ -4,11 +4,11 @@
 
 ### Coding Environment: Python 3.8 | BERTopic 0.16.0
 ## STEP 1
-
+Collect Data
 ## STEP 2
-
+Preprocessing (i.e. remove stop words and other meaningless words), then generate the word clouds for each decade.
 ## STEP 3
-
+Topic Modeling 
 ## STEP 4
-
+Analysis of Topic Modeling Results
 
