@@ -11,25 +11,31 @@ def __display_paper_yearly__(data):
     :param data: df with col 'publication year and amount'
     :return: a plot
     '''
-    #matplotlib inline
+    # matplotlib inline
+    import matplotlib.pyplot as plt
+    # fig = plt.figure()
+    plt.figure(figsize=(35, 15))
+    # plt.style.use('ggplot')
 
-    #fig = plt.figure()
-    plt.figure(figsize=(25,10))
-    #plt.style.use('ggplot')
-
-    #x = list(data.year)
+    # x = list(data.year)
     x = list(data['Publication Year'])
     y = list(data.amount)
     x_pos = [i for i, _ in enumerate(x)]
 
-    #'#469EB4', '#4E62AB'
-    #plt.bar(x_pos, y, width=0.80, color='#43a2ca')
-    plt.bar(x_pos, y, width=0.80, color='#469EB4')
-    plt.xlabel("Year", fontsize = 24, fontname = "Arial")
-    plt.ylabel("Paper Count", fontsize = 24, fontname = "Arial")
+    # '#469EB4', '#4E62AB'
+    # plt.bar(x_pos, y, width=0.80, color='#43a2ca')
+    plt.bar(x_pos, y, width=0.80, color='#95A2C3')
+    # plt.bar(x_pos, y, width=0.80, color='#469EB4')
+    plt.xlabel("Year", fontsize=24, fontname="Arial")
+    plt.ylabel("Paper Count", fontsize=24, fontname="Arial")
 
-    plt.xticks(x_pos, x)
+    plt.xticks(x_pos, x, fontsize=18)
+    plt.yticks(fontsize=20)
+
     plt.gcf().autofmt_xdate()  # italics of x label
+
+    plt.grid(True, linestyle='--', zorder=0)  # Dashed grid lines behind plot
+    plt.gca().set_axisbelow(True)  # Set the grid lines below the bars
     plt.show()
 
 
@@ -61,7 +67,7 @@ def __display_authorship_yearly__(data):
     import matplotlib.pyplot as plt
 
     # fig = plt.figure()
-    plt.figure(figsize=(25, 10))
+    plt.figure(figsize=(35, 15))
     # plt.style.use('ggplot')
 
     # x = list(data.year)
@@ -73,15 +79,19 @@ def __display_authorship_yearly__(data):
     # plt.bar(x_pos, y, width=0.80, color='#43a2ca')
     # plt.bar(x_pos, y, width=0.80, color='#469EB4')
 
-    plt.plot(x_pos, y, marker='o', linestyle='-', color='#469EB4')
+    # plt.plot(x_pos, y, marker='o', linestyle='-', color='#469EB4')
+    plt.plot(x_pos, y, marker='o', linestyle='-', color='#95A2C3')
 
     # plt.scatter(x_pos, y, color= 'red')
 
     plt.xlabel("Year", fontsize=24, fontname="Arial")
     plt.ylabel("AVG Author", fontsize=24, fontname="Arial")
 
-    plt.xticks(x_pos, x)
+    plt.xticks(x_pos, x, fontsize=18)
+    plt.yticks(fontsize=20)  # Adjust y tick labels size
+
     plt.gcf().autofmt_xdate()  # italics of x label
+    plt.grid(True, linestyle='--')
     plt.show()
 
 # End of Section 1
@@ -101,8 +111,9 @@ def __get_topic_allwords__(all_topics, t_model):
     words_list = []
 
     for topic in all_topics:
-        topic_name = "Topic" + str(topic)
-        topic_list.append(topic_name)
+        #topic_name = "Topic" + str(topic)
+        #topic_list.append(topic_name)
+        topic_list.append(topic)
         # print(topic_name)
         frq = t_model.get_topic_freq(topic)
         freq_list.append(frq)
@@ -116,7 +127,7 @@ def __get_topic_allwords__(all_topics, t_model):
 
         words_list.append(topic_word)
     # words_list.append(join(topic_word))
-    topics_df = pd.DataFrame(list(zip(topic_list, freq_list, words_list)), columns=['Topic', 'Freq', 'Words'])
+    topics_df = pd.DataFrame(list(zip(topic_list, freq_list, words_list)), columns=['Topic', 'Freq', 'Allwords'])
     return topics_df
 
 
@@ -161,9 +172,10 @@ def __gen_cloud_3_color__(data, w, h):  # Generate word cloud
     '''
 
     # Define custom colormap with orange, blue, and green
-    colors = ['#386cb0', '#fdc086', '#7fc97f']  # Orange, Blue, Green
+    #colors = ['#386cb0', '#fdc086', '#7fc97f']  # Orange, Blue, Green
     # colors = ['#E07F86', '#fc8d62', '##8FA2CD']  # Orange, Blue, Green
     # colors = ['#4E62AB', '#87CFA4', '#F57547']
+    colors = ['#95A2C3', '#AECD54', '#F2A93B']
     font_path = "src/DM_Sans/DMSans-VariableFont_opsz,wght.ttf"
 
     # cmap = LinearSegmentedColormap.from_list('custom', colors)
