@@ -188,3 +188,17 @@ def __gen_cloud_3_color__(data, w, h):  # Generate word cloud
     plt.imshow(wordcloud, interpolation='bilinear')
     plt.axis('off')
     plt.show()
+
+def __get_decade_author__(data):
+    '''
+    :param data: decade data
+    :return: avg author per decade
+    '''
+    data['a_amount'] = data['Author'].apply(lambda x: __count_authors__(x))
+    # print(data['a_amount'].unique())
+
+    author_df = data.loc[:, ["Publication Year", "a_amount"]]
+    # print(author_df.head())
+    # authoravg = author_df.groupby(by=["Publication Year"]).mean().reset_index()
+    # authoravg.loc[:, ['Publication Year', 'a_amount']].head()
+    print("AVG per decade:", author_df.a_amount.mean())
