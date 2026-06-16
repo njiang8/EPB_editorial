@@ -63,7 +63,7 @@ total contribution remains constant regardless of author count.
 
 An author's weighted degree represents their total collaborative intensity, computed as:
 
-![](Figures/3.png)
+![](figures/3.png)
 
 where *N(i)* is the set of all collaborators of author *i*. This measure captures both the breadth
 (number of different collaborators) and intensity (cumulative collaboration strength) of an author’s
