@@ -32,6 +32,8 @@ As for the corpus of titles and abstracts, we removed the regular stop words (e.
 
 We constructed and analyzed the EPB collaboration network using a multi-step approach designed to
 capture both the structure and evolution of academic partnerships
+* [NetworkAnalysis Code](add)
+
 
 #### 2.1.1: Network Construction
 
@@ -136,6 +138,8 @@ a, and an) along with words that appeared more than 1000 times in all abstracts 
 as well as any words that were too generic or less indicative of a topic (e.g. technique, important,
 existing, and way). From the processed data corpus of titles.
 
+* [Basic Analysis Code](running_steps/02.0-general_analysis.py)
+
 #### Step 2.2.1: Topic Modeling
 
 With respect to the corpus of the abstracts, we removed regular stop words (e.g. a, an, and the) before
@@ -147,6 +151,7 @@ more details). In order to explore the topics over time we applied a Python pack
 for each topic. BERTopic classified all abstracts into 40 topics including one irrelevant or outlier topic
 (see Grootendorst (2022) for more details).
 
+* [Topic Modeling Code](running_steps/02.2-topicmodeling-visualization.ipynb)
 
 
 ## References
