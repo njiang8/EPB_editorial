@@ -1,97 +1,188 @@
+
+import os
+import numpy as np
 import pandas as pd
-from wordcloud import WordCloud
+#from wordcloud import WordCloud
 import matplotlib.pyplot as plt
 from matplotlib.colors import LinearSegmentedColormap
 from matplotlib.colors import ListedColormap
 
-# Section 1 General Stat Functions
-def __display_paper_yearly__(data):
-    '''
-    Display histogram of yearly news amount
-    :param data: df with col 'publication year and amount'
-    :return: a plot
-    '''
-    # matplotlib inline
-    import matplotlib.pyplot as plt
-    # fig = plt.figure()
+
+def get_yearly_paper_counts(df):
+    """
+    Cleans the dataframe by removing records with missing years and
+    aggregates paper counts by year.
+
+    Args:
+        df (pd.DataFrame): Input dataframe containing 'year' and 'amount' columns.
+
+    Returns:
+        pd.DataFrame: A dataframe with unique years and their corresponding total amounts.
+    """
+    # Create a copy to avoid modifying the original dataframe
+    work_df = df.copy()
+    year_with_nan = work_df[work_df["year"].isna()]
+    print(f"Papers without a year record: {len(year_with_nan)}")
+
+    # Drop rows where 'year' is missing and ensure 'amount' is numeric
+    work_df = work_df.dropna(subset=['year'])
+    work_df['amount'] = 1
+    work_df['amount'] = pd.to_numeric(work_df['amount'], errors='coerce').fillna(0)
+
+    # Group by 'year' and sum the 'amount'
+    # reset_index() converts the grouping index back into a column
+    year_count = work_df.groupby('year')['amount'].sum().reset_index()
+
+    # Ensure year is integer (optional, prevents '2020.0')
+    year_count['year'] = year_count['year'].astype(int)
+
+    return year_count
+
+def display_paper_yearly(data, year_gap, output_dir):
+    """
+    Generates and saves a bar chart showing the number of papers published per year.
+
+    Args:
+        data (pd.DataFrame): DataFrame containing 'year' and 'amount' columns.
+        year_gap (int): The interval frequency for X-axis labels.
+        output_dir (str): The folder path where the image will be saved.
+    """
+    # Ensure the output directory exists
+    os.makedirs(output_dir, exist_ok=True)
+
+    # Initialize the plot
     plt.figure(figsize=(35, 15))
-    # plt.style.use('ggplot')
 
-    # x = list(data.year)
-    x = list(data['Publication Year'])
-    y = list(data.amount)
-    x_pos = [i for i, _ in enumerate(x)]
+    x = list(data['year'])
+    y = list(data['amount'])
+    x_pos = np.arange(len(x))
 
-    # '#469EB4', '#4E62AB'
-    # plt.bar(x_pos, y, width=0.80, color='#43a2ca')
-    plt.bar(x_pos, y, width=0.80, color='#95A2C3')
-    # plt.bar(x_pos, y, width=0.80, color='#469EB4')
-    plt.xlabel("Year", fontsize=24, fontname="Arial")
-    plt.ylabel("Paper Count", fontsize=24, fontname="Arial")
+    # Plot the bar chart
+    plt.bar(x_pos, y, width=0.85, color='#95A2C3')
+    plt.xlabel("Year", fontsize=32, fontname="Arial")
+    plt.ylabel("Paper Count", fontsize=32, fontname="Arial")
 
-    plt.xticks(x_pos, x, fontsize=18)
-    plt.yticks(fontsize=20)
+    # Set custom X-axis labels based on the year_gap
+    tick_idx = np.arange(0, len(x_pos), year_gap)
+    tick_labels = [x[i] for i in tick_idx]
+    plt.xticks(tick_idx, tick_labels, fontsize=28)
 
-    plt.gcf().autofmt_xdate()  # italics of x label
+    # Style configuration
+    plt.yticks(fontsize=28)
+    plt.xlim(-0.5, len(x_pos) - 0.5)
+    plt.grid(True, linestyle='--', zorder=0)
+    plt.gca().set_axisbelow(True)
 
-    plt.grid(True, linestyle='--', zorder=0)  # Dashed grid lines behind plot
-    plt.gca().set_axisbelow(True)  # Set the grid lines below the bars
-    plt.show()
+    # Define full file path separately to avoid overwriting the directory argument
+    file_name = "paper_published_yearly.png"
+    full_save_path = os.path.join(output_dir, file_name)
+    plt.savefig(full_save_path, dpi=300, bbox_inches='tight')
+    print(f"Chart successfully saved to: {full_save_path}")
 
 
-def __count_authors__(data_col):
+def count_authors(author_data):
+    """
+    Counts the number of authors from the provided author string.
+
+    Args:
+        author_data (str): A string containing author names (e.g., "John Doe, Jane Smith").
+
+    Returns:
+        int: The number of authors found, or 0 if the input is invalid.
+    """
+    # Check if the input is a valid string; return 0 for NaN or non-string values
+    if not isinstance(author_data, str) or author_data.strip() == "":
+        return 0
+
+    # Assuming authors are separated by commas or semicolons
+    # Adjust the split character based on your specific CSV format
+    authors = author_data.split(';')
+    return len(authors)
+
+
+def calc_yearly_avg_authors(data):
+    """
+    Calculate the average number of authors per paper grouped by publication year
+    :param data: Input dataframe containing columns 'year' and 'authors'
+    :return: Dataframe with each year and its corresponding average author count
+    """
+    # Calculate author count for each paper using custom count_authors function
+    data['a_amount'] = data['authors'].apply(lambda x: count_authors(x))
+
+    # Print all unique author count values for data inspection
+    print("paper with most authors", data['a_amount'].max())
+
+    # Extract only year and author count columns to a new dataframe
+    author_df = data.loc[:, ["year", "a_amount"]]
+
+    # Display first 5 rows to preview the filtered data
+    # print(author_df.head())
+
+    # Group records by year and compute mean author number, reset index to convert group key to column
+    authoravg_df = author_df.groupby(by=["year"]).mean().reset_index()
+    authoravg_df['year'] = authoravg_df['year'].astype(int)
+
+    return authoravg_df
+
+
+def display_authorship_yearly(data, year_gap, output_dir):
     '''
-    Count the number of authors for each paper using the number of semicolon,
-        num + 1 is the final number of author,
-        if no semicolon, single author work
-    :param data_col: author column
-    :return: number of authors for each paper
+    Plot line chart showing yearly average number of authors and save figure to target directory
+    :param data: DataFrame containing columns 'year' and 'a_amount'
+    :param year_gap: Interval for x-axis tick labels (unused in current tick logic, reserved for extension)
+    :param output_dir: Target folder path to store output PNG image
+    :return: None, generates and saves plot file locally
     '''
+    # Create figure canvas with specified size and white background
+    plt.figure(figsize=(35, 15), facecolor='white')
 
-    semicolon_count = data_col.count(';')
-    if semicolon_count > 0:
-        #print(semicolon_count)
-        return semicolon_count + 1
-    else:
-        #print('No semicolon')
-        return 1
+    # Extract x-axis year values and y-axis average author counts
+    x = list(data['year'])
+    y = list(data['a_amount'])
+    # Generate sequential position indices for plotting
+    x_pos = np.arange(len(x))
 
+    # Draw line plot with circle markers, custom color and line size settings
+    plt.plot(
+        x_pos, y,
+        marker='o',
+        linestyle='-',
+        color='#95A2C3',
+        linewidth=3,
+        markersize=10
+    )
 
-def __display_authorship_yearly__(data):
-    '''
-    Display histogram of authorship_yearly
-    :param data: df with col 'publication year and a_amount'
-    :return: a plot
-    '''
+    # Set X/Y axis labels with specified font family and size
+    plt.xlabel("Year", fontsize=32, fontname="Arial")
+    plt.ylabel("Average Number of Authors", fontsize=32, fontname="Arial")
 
-    import matplotlib.pyplot as plt
+    # Auto rotate x-axis tick labels to prevent text overlap
+    plt.gcf().autofmt_xdate()
 
-    # fig = plt.figure()
-    plt.figure(figsize=(35, 15))
-    # plt.style.use('ggplot')
+    # Customize tick range and label text for X and Y axes
+    tick_idx = np.arange(0, len(x_pos), year_gap)
+    tick_labels = [x[i] for i in tick_idx]
+    plt.xticks(tick_idx, tick_labels, fontsize=28)
 
-    # x = list(data.year)
-    x = list(data['Publication Year'])
-    y = list(data.a_amount)
-    x_pos = [i for i, _ in enumerate(x)]
+    plt.yticks(fontsize=28)
 
-    # '#469EB4', '#4E62AB'
-    # plt.bar(x_pos, y, width=0.80, color='#43a2ca')
-    # plt.bar(x_pos, y, width=0.80, color='#469EB4')
+    # Set horizontal axis boundary range
+    plt.xlim(-1, 52)
+    plt.gcf().autofmt_xdate()
 
-    # plt.plot(x_pos, y, marker='o', linestyle='-', color='#469EB4')
-    plt.plot(x_pos, y, marker='o', linestyle='-', color='#95A2C3')
+    # Enable dashed background grid and render grid behind plot lines
+    plt.grid(True, linestyle='--', zorder=0)
+    plt.gca().set_axisbelow(True)
 
-    # plt.scatter(x_pos, y, color= 'red')
+    # Define output file name and combine with target directory path
+    file_name = "avg_author_yearly.png"
+    full_save_path = os.path.join(output_dir, file_name)
 
-    plt.xlabel("Year", fontsize=24, fontname="Arial")
-    plt.ylabel("AVG Author", fontsize=24, fontname="Arial")
+    # Save high-resolution figure, trim extra blank borders
+    plt.savefig(full_save_path, dpi=300, bbox_inches='tight')
+    print(f"Chart successfully saved to: {full_save_path}")
 
-    plt.xticks(x_pos, x, fontsize=18)
-    plt.yticks(fontsize=20)  # Adjust y tick labels size
-
-    plt.gcf().autofmt_xdate()  # italics of x label
-    plt.grid(True, linestyle='--')
+    # Pop up figure window for preview
     plt.show()
 
 # End of Section 1
@@ -131,74 +222,3 @@ def __get_topic_allwords__(all_topics, t_model):
     return topics_df
 
 
-# Find related tooics with certain keywords
-def Keyword_Search(keyword_list, topicmodel, valid_topic_list):
-    similar_topic_list = []
-    for keyWord in keyword_list:
-        # find similar topics
-        similar_topics, similarity = topicmodel.find_topics(keyWord, top_n=3)
-        print("-Using keyword:", keyWord, "related", similar_topics)
-        print(similarity)
-        # append all topic from each set of similar topics
-        for item in similar_topics:
-            if item in valid_topic_list:
-                similar_topic_list.append(item)
-            else:
-                pass
-
-    # before drop dulicates
-    print("Before remove", similar_topic_list)
-
-    # remove duplicate item in list
-    final_list = list(set(similar_topic_list))
-    # print("Arfter remove", final_list)
-
-    print("Final", keyWord, "related topic", final_list)
-
-    for topicnum in final_list:
-        print("Topic", topicnum)
-        print(topicmodel.get_topic(topicnum))
-
-    return final_list
-
-
-# Section 3 Word Cloud Visual
-def __gen_cloud_3_color__(data, w, h):  # Generate word cloud
-    '''
-    :param data: freq data
-    :param w: width
-    :param h: height
-    :return: a word cloud figure
-    '''
-
-    # Define custom colormap with orange, blue, and green
-    #colors = ['#386cb0', '#fdc086', '#7fc97f']  # Orange, Blue, Green
-    # colors = ['#E07F86', '#fc8d62', '##8FA2CD']  # Orange, Blue, Green
-    # colors = ['#4E62AB', '#87CFA4', '#F57547']
-    colors = ['#95A2C3', '#AECD54', '#F2A93B']
-    font_path = "src/DM_Sans/DMSans-VariableFont_opsz,wght.ttf"
-
-    # cmap = LinearSegmentedColormap.from_list('custom', colors)
-    cmap = ListedColormap(colors)
-    wordcloud = WordCloud(width=w, height=h, background_color='white', colormap=cmap, prefer_horizontal=1,
-                          font_path=font_path).generate_from_frequencies(data)
-
-    # Display the word cloud using matplotlib
-    plt.figure(figsize=(10, 5))
-    plt.imshow(wordcloud, interpolation='bilinear')
-    plt.axis('off')
-    plt.show()
-
-def __get_decade_author__(data):
-    '''
-    :param data: decade data
-    :return: avg author per decade
-    '''
-    data['a_amount'] = data['Author'].apply(lambda x: __count_authors__(x))
-    # print(data['a_amount'].unique())
-
-    author_df = data.loc[:, ["Publication Year", "a_amount"]]
-    # print(author_df.head())
-    # authoravg = author_df.groupby(by=["Publication Year"]).mean().reset_index()
-    # authoravg.loc[:, ['Publication Year', 'a_amount']].head()
-    print("AVG per decade:", author_df.a_amount.mean())

@@ -1,8 +1,5 @@
 #regular packages
-import pandas as pd
 import string
-import numpy as np
-import os
 
 #nlp packages
 import nltk
@@ -28,9 +25,6 @@ def __remove_plurals__(text):
     words = text.split()
     processed_words = [word if word in special_words else lemmatizer.lemmatize(word) for word in words]
     return ' '.join(processed_words)
-    # = [word if word in special_words else lemmatizer.lemmatize(word) for word in words]
-
-    # return ' '.join(processed_words)
 
 
 def __remove_stopwords__(text_col, stopwords):
@@ -63,4 +57,4 @@ def __decade_pre_process__(data, stopword):
     data['abstract'] = data['abstract'].apply(lambda x: __remove_plurals__(x))
     data['abstract'] = __remove_stopwords__(data['abstract'], stopword)
     data_freq = __get_word_freq__(data['abstract'])
-    return data_freq#[:30]
+    return data_freq
