@@ -24,10 +24,8 @@ In total, 2831 papers were published between 1974 and March 2026 on EPB. After t
 
 As for the corpus of titles and abstracts, we removed the regular stop words (e.g., the, a, and an) along with words that appeared more than 1000 times in all titles and abstracts. In addition, any words that were too generic or less indicative of a topic (e.g., technique, important, existing, and way) were removed. 
 
-
-
-
-
+[Preprocessing-abstracts Code](running_steps/01.0-data-preprocessing-abstracts.py)
+[Preprocessing-author Code](running_steps/01.2-data-preprocessing-author.ipynb)
 ---
 
 ### Step 2.1: Network Analysis
