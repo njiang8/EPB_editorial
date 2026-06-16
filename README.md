@@ -9,7 +9,7 @@
 
 This section demonstrates the overall workflow of this work while the high level overview is shown in Figure 1. Specifically, we first collected the titles and abstracts of all papers (excluding editorials and commentaries) along with the author names that have been published in Environment and Planning B (EPB). At the preprocessing stage, the data is divided into two: one is the author names dataset for network analysis and the other one is a single data corpus comprising the paper titles and abstract for text analysis. The whole workflow (e.g., network analyses and topic modeling) is implemented using NetworkX and BERTopic in Python. In addition, resulting visualizations are created using both static matplotlib plots and interactive Cosmograph displays for comprehensive exploration of network and topic structures.
 
-![Workflow](Figures/00-workflow.png)
+![Workflow](figures/00-workflow.png)
 
 Figure 1: Workflow
 ---
