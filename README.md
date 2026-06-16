@@ -110,7 +110,7 @@ identify densely connected groups of authors. To ensure reproducibility, we used
 and standardized community identifiers based on community size and key members. The algorithm
 iteratively moves nodes between communities to maximize modularity, defined as:
 
-![](4.png)
+![](figures/4.png)
 
 where *A<sub>ij</sub>* is the adjacency matrix, *k<sub>i </sub>* is the degree of node *i*, *m* is the total number of edges, and
 *δ(c<sub>i</sub>, c<sub>j</sub>)* equals 1 if nodes *i* and *j* belong to the same community.
