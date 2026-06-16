@@ -44,12 +44,12 @@ The collaboration network was built from the standardized author data, where nod
 
 For a paper *p* with *n* authors, each pairwise collaboration receives a weight of *w = 1/n*. This fractional weighting scheme ensures that each paper contributes a total weight of 1 to the network, distributed equally among all possible author pairs. Formally, for authors *i* and *j* collaborating on paper *p*, the contribution to their edge weight is:
 
-![](Figures/1.png)
+![](figures/1.png)
 
 
 where *n<sub>p</sub>* is the number of authors on paper *p*. The total weight of edge *(i,j)* across all their collaborations is:
 
-![](Figures/2.png)
+![](figures/2.png)
 
 where *P<sub>{ij}</sub>* represents the set of papers on which authors *i* and *j* have collaborated.
 
