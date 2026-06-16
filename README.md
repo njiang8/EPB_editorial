@@ -31,7 +31,7 @@ As for the corpus of titles and abstracts, we removed the regular stop words (e.
 
 We constructed and analyzed the EPB collaboration network using a multi-step approach designed to
 capture both the structure and evolution of academic partnerships
-* [NetworkAnalysis Code](add)
+* [NetworkAnalysis Code](https://github.com/wujlin/EPB_Author_Network)
 
 
 #### 2.1.1: Network Construction
